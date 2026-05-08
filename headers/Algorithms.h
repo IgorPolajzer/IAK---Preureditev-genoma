@@ -32,18 +32,19 @@ namespace Algorithms {
         std::vector<size_t> genome = Util::readFile(fileName);
         std::vector<size_t> result;
 
-        std::vector<Track> tracks = Util::getTracks(genome);
-        size_t breakpointCount = Util::getBreakpointCount(tracks);
+        size_t breakpointCount = Util::getBreakpointCount(genome);
 
         while (breakpointCount > 0) {
-            if (Util::tracksIncludeDesc(tracks)) {
-                auto track = Util::getApplicableTrack(genome);
+            std::vector<Track> tracks = Util::getTracks(genome);
+            std::vector<Track> descTracks = Util::getDescTracks(tracks);
+
+            if (!descTracks.empty()) {
+                genome = Util::reverseApplicableTrack(genome, descTracks);
             } else {
 
             }
 
-            tracks = Util::getTracks(genome);
-            breakpointCount = Util::getBreakpointCount(tracks);
+            breakpointCount = Util::getBreakpointCount(genome);
             Util::outputVector(outputFile, genome, true);
         }
 
