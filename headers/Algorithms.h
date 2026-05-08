@@ -4,24 +4,36 @@
 
 #ifndef IAK_PREUREDITEV_GENOMA_ALGORITHMS_H
 #define IAK_PREUREDITEV_GENOMA_ALGORITHMS_H
-#include <fstream>
 #include <vector>
+#include <bits/stdc++.h>
 
 #include "Util.h"
 
 namespace Algorithms {
+    inline std::vector<size_t> simpleReversalSort(const std::string& fileName, std::ofstream& outputFile) {
+        std::vector<size_t> genome = Util::readFile(fileName);
+        std::vector<size_t> result;
 
-    std::vector<size_t> simpleReversalSort(std::string fileName) {
-        std::string stringFile = Util::readFile(fileName);
+        for (size_t i = 0; i < genome.size(); ++i) {
+            size_t j = std::find(genome.begin(), genome.end(), i + 1) - genome.begin();
 
-        return {1, 2, 3};
+            if (i != j) {
+                Util::reverseTrack(genome, i , j);
+                Util::outputVector(outputFile, genome, true);
+                Util::output(outputFile, "\n", true);
+            }
+
+            if (Util::isPermutationIdentity(genome)) return genome;
+        }
+
+        return genome;
     }
 
-    std::vector<size_t> improvedSimpleReversalSort(std::string fileName) {
+    inline std::vector<size_t> improvedBreakpointReversalSort(const std::string& fileName) {
 
     }
 
-    std::vector<size_t> ownImprovedImplementation(std::string fileName) {
+    inline std::vector<size_t> ownImprovedImplementation(const std::string& fileName) {
 
     }
 }

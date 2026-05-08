@@ -21,17 +21,16 @@ int main(const int argc, char** argv) {
 
     std::ofstream outputFile = std::ofstream(OUTPUT_FOLDER + outputFileName);
     if (modeFlag == "-rs") {
-        results = Algorithms::simpleReversalSort(fileName);
-    } else if (modeFlag == "-irs") {
-        results = Algorithms::improvedSimpleReversalSort(fileName);
+        results = Algorithms::simpleReversalSort(fileName, outputFile);
+    } else if (modeFlag == "-ibrs") {
+        results = Algorithms::improvedBreakpointReversalSort(fileName);
     } else if (modeFlag == "-imp") {
         results = Algorithms::ownImprovedImplementation(fileName);
     }
 
     std::filesystem::create_directories(OUTPUT_FOLDER);
-    for (auto result : results) {
-        Util::output(outputFile, std::to_string(result));
-    }
+    Util::output(outputFile, "\nResult: ", true);
+    Util::outputVector(outputFile, results, true);
 
     return 0;
 }
