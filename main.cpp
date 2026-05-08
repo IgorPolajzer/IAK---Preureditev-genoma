@@ -23,7 +23,7 @@ int main(const int argc, char** argv) {
     if (modeFlag == "-rs") {
         results = Algorithms::simpleReversalSort(fileName, outputFile);
     } else if (modeFlag == "-ibrs") {
-        results = Algorithms::improvedBreakpointReversalSort(fileName);
+        results = Algorithms::improvedBreakpointReversalSort(fileName, outputFile);
     } else if (modeFlag == "-imp") {
         results = Algorithms::ownImprovedImplementation(fileName);
     }

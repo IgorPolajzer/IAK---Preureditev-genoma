@@ -9,6 +9,8 @@
 #include <sstream>
 #include <algorithm>
 
+#include "Track.h"
+
 namespace Util {
 
     inline void output(std::ofstream& file, const std::string& msg, const bool print=true) {
@@ -88,8 +90,8 @@ namespace Util {
         return  isSequence(vec) || isSequence(reverseTrack(vec, 0, vec.size() - 1));
     }
 
-    inline std::vector<std::vector<size_t>> getTracks(std::vector<size_t>& genome) {
-        std::vector<std::vector<size_t>> tracks;
+    inline std::vector<Track> getTracks(std::vector<size_t>& genome) {
+        std::vector<Track> tracks;
 
         for (int i = 1; i < genome.size(); i++) {
             std::vector<size_t> track;
@@ -102,11 +104,55 @@ namespace Util {
             }
             track.pop_back();
 
-            tracks.push_back(track);
+            // Substract 1 from both indexes since i starts with 1
+            // Subtract an additional 1 from j since we pop_back the last element.
+            tracks.push_back(Track(track, i - 1, j - 2));
             i += track.size() - 1;
         }
 
         return tracks;
+    }
+
+    inline size_t getBreakpointCount(const std::vector<Track>& tracks) {
+        size_t count = 0;
+
+        for (auto track : tracks) {
+            if (tracks.size() != 1) count++;
+        }
+
+        return count;
+    }
+
+    inline bool tracksIncludeDesc(const std::vector<Track>& tracks) {
+        bool includeDesc = false;
+
+        for (auto track : tracks) {
+            for (size_t i = 1; i < track.track.size(); i++) {
+                if (track.track[i-1] < track.track[i]) includeDesc = true;
+            }
+
+            if (includeDesc) break;
+        }
+
+        return includeDesc;
+    }
+
+    inline std::vector<size_t> getApplicableTrack(std::vector<size_t> genome) {
+        std::vector<size_t> track;
+
+        auto tracks = getTracks(genome);
+        size_t breakPointCount = getBreakpointCount(tracks);
+        size_t newBreakPointCount = breakPointCount;
+
+        size_t i = 0;
+        while (newBreakPointCount >= breakPointCount || i < tracks.size()) {
+            genome = reverseTrack(genome, tracks[i].startIndex, tracks[i].endIndex);
+            tracks = getTracks(genome);
+            newBreakPointCount = getBreakpointCount(tracks);
+            i++;
+        }
+
+        return track;
     }
 }
 

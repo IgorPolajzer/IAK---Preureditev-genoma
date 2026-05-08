@@ -28,11 +28,26 @@ namespace Algorithms {
         return genome;
     }
 
-    inline std::vector<size_t> improvedBreakpointReversalSort(const std::string& fileName) {
+    inline std::vector<size_t> improvedBreakpointReversalSort(const std::string& fileName, std::ofstream& outputFile) {
         std::vector<size_t> genome = Util::readFile(fileName);
-        std::vector<std::vector<size_t>> tracks = Util::getTracks(genome);
         std::vector<size_t> result;
 
+        std::vector<Track> tracks = Util::getTracks(genome);
+        size_t breakpointCount = Util::getBreakpointCount(tracks);
+
+        while (breakpointCount > 0) {
+            if (Util::tracksIncludeDesc(tracks)) {
+                auto track = Util::getApplicableTrack(genome);
+            } else {
+
+            }
+
+            tracks = Util::getTracks(genome);
+            breakpointCount = Util::getBreakpointCount(tracks);
+            Util::outputVector(outputFile, genome, true);
+        }
+
+        return result;
     }
 
     inline std::vector<size_t> ownImprovedImplementation(const std::string& fileName) {
