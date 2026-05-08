@@ -48,7 +48,7 @@ namespace Util {
         return stringFile;
     }
 
-    inline void reverseTrack(std::vector<size_t> &genome, const size_t start, const size_t end) {
+    inline std::vector<size_t> reverseTrack(std::vector<size_t> genome, const size_t start, const size_t end) {
         auto startIt = genome.begin() + start;
         auto endIt = genome.begin() + end + 1;
 
@@ -61,10 +61,12 @@ namespace Util {
         auto next_pos = genome.erase(startIt, endIt);
         genome.insert(next_pos, result.begin(), result.end());
 
-        std::cout <<"";
+        return genome;
     }
 
-    inline bool isPermutationIdentity(const std::vector<size_t> vec) {
+    inline bool isPermutationIdentity(const std::vector<size_t>& vec) {
+        if (vec.size() == 1) return true;
+
         for (size_t i = 0; i < vec.size(); i++) {
             if (vec[i] != i) return false;
         }
@@ -72,8 +74,39 @@ namespace Util {
         return true;
     }
 
-    inline std::vector<std::vector<size_t>> getTracks(std::vector<size_t>& genome) {
+    inline bool isSequence(const std::vector<size_t>& vec) {
+        if (vec.size() == 1) return true;
 
+        for (size_t i = 1; i < vec.size(); i++) {
+            if (vec[i] != vec[i-1] + 1) return false;
+        }
+
+        return true;
+    }
+
+    inline bool isTrack(std::vector<size_t>& vec) {
+        return  isSequence(vec) || isSequence(reverseTrack(vec, 0, vec.size() - 1));
+    }
+
+    inline std::vector<std::vector<size_t>> getTracks(std::vector<size_t>& genome) {
+        std::vector<std::vector<size_t>> tracks;
+
+        for (int i = 1; i < genome.size(); i++) {
+            std::vector<size_t> track;
+            track.push_back(genome[i-1]);
+
+            size_t j = i;
+            while (isTrack(track) && j < genome.size()) {
+                track.push_back(genome[j]);
+                j++;
+            }
+            track.pop_back();
+
+            tracks.push_back(track);
+            i += track.size() - 1;
+        }
+
+        return tracks;
     }
 }
 
