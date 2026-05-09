@@ -11,20 +11,21 @@ void runAlgorithm(const std::string& modeFlag, const std::string& fileName) {
     size_t pos = fileName.find('/');
     std::string outputFileName = fileName.substr(pos + 1);
     std::ofstream outputFile;
+    size_t reverseCounter = 0;
 
     auto start = std::chrono::high_resolution_clock::now();
     if (modeFlag == "-rs") {
         std::filesystem::create_directories(OUTPUT_FOLDER + "simple_reversal_sort/");
         outputFile = std::ofstream(OUTPUT_FOLDER + "simple_reversal_sort/" + outputFileName);
-        results = Algorithms::simpleReversalSort(fileName, outputFile);
+        results = Algorithms::simpleReversalSort(fileName, outputFile, reverseCounter);
     } else if (modeFlag == "-ibrs") {
         std::filesystem::create_directories(OUTPUT_FOLDER + "improved_breakpoint_reversal_sort/");
         outputFile = std::ofstream(OUTPUT_FOLDER + "improved_breakpoint_reversal_sort/" + outputFileName);
-        results = Algorithms::improvedBreakpointReversalSort(fileName, outputFile);
+        results = Algorithms::improvedBreakpointReversalSort(fileName, outputFile, reverseCounter);
     } else if (modeFlag == "-imp") {
         std::filesystem::create_directories(OUTPUT_FOLDER + "improved_custom_reversal_sort/");
         outputFile = std::ofstream(OUTPUT_FOLDER + "improved_custom_reversal_sort/" + outputFileName);
-        results = Algorithms::ownImprovedImplementation(fileName, outputFile);
+        results = Algorithms::ownImprovedImplementation(fileName, outputFile, reverseCounter);
     }
 
     auto stop = std::chrono::high_resolution_clock::now();
@@ -41,6 +42,8 @@ void runAlgorithm(const std::string& modeFlag, const std::string& fileName) {
         std::to_string(microsDuration.count()) + " us\n",
         true
     );
+
+    Util::output(outputFile, "\nReverse counter: " + std::to_string(reverseCounter), true);
 }
 
 int main(const int argc, char** argv) {

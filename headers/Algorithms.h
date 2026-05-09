@@ -10,7 +10,7 @@
 #include "Util.h"
 
 namespace Algorithms {
-    inline std::vector<size_t> simpleReversalSort(const std::string& fileName, std::ofstream& outputFile) {
+    inline std::vector<size_t> simpleReversalSort(const std::string& fileName, std::ofstream& outputFile, size_t& reverseCounter) {
         std::vector<size_t> genome = Util::readFile(fileName);
 
         for (size_t i = 0; i < genome.size(); ++i) {
@@ -18,6 +18,8 @@ namespace Algorithms {
 
             if (i != j) {
                 genome = Util::reverseTrack(genome, i , j);
+                reverseCounter++;
+
                 Util::outputVector(outputFile, genome, true);
                 Util::output(outputFile, "\n", true);
             }
@@ -28,7 +30,7 @@ namespace Algorithms {
         return genome;
     }
 
-    inline std::vector<size_t> improvedBreakpointReversalSort(const std::string& fileName, std::ofstream& outputFile) {
+    inline std::vector<size_t> improvedBreakpointReversalSort(const std::string& fileName, std::ofstream& outputFile, size_t& reverseCounter) {
         std::vector<size_t> genome = Util::readFile(fileName);
 
         // Add imaginary 0 and n+1 to the genome.
@@ -43,8 +45,10 @@ namespace Algorithms {
 
             if (!descTracks.empty()) {
                 genome = Util::reverseApplicableTrack(genome, descTracks);
+                reverseCounter++;
             } else {
                 genome = Util::reverseAscending(genome);
+                reverseCounter++;
             }
 
             breakpointCount = Util::getBreakpointCount(genome);
@@ -58,7 +62,7 @@ namespace Algorithms {
         return genome;
     }
 
-    inline std::vector<size_t> ownImprovedImplementation(const std::string& fileName, std::ofstream& outputFile) {
+    inline std::vector<size_t> ownImprovedImplementation(const std::string& fileName, std::ofstream& outputFile, size_t& reverseCounter) {
         std::vector<size_t> genome = Util::readFile(fileName);
 
         // Add imaginary 0 and n+1 to the genome.
@@ -72,9 +76,11 @@ namespace Algorithms {
             std::vector<Track> descTracks = Util::getDescTracks(tracks);
 
             if (!descTracks.empty()) {
-                genome = Util::reverseApplicableTrackImproved(genome, descTracks);
+                genome = Util::reverseApplicableTrack(genome, descTracks);
+                reverseCounter++;
             } else {
                 genome = Util::reverseAscending(genome);
+                reverseCounter++;
             }
 
             breakpointCount = Util::getBreakpointCount(genome);
