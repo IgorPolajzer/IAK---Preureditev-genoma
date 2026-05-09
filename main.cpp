@@ -68,7 +68,7 @@ int main(const int argc, char** argv) {
             "genom/G5.txt"
         };
 
-        for (auto problemFile : problemFiles) {
+        for (const auto& problemFile : problemFiles) {
             runAlgorithm(testAlgorithm, problemFile);
         }
     }

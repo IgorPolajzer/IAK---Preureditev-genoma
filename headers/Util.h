@@ -187,20 +187,21 @@ namespace Util {
         if (descTracks.empty()) return {};
 
         // Find the descendingTrack with the smallest number.
-        Track descTrack;
-        size_t smallestNumber = -1;
-        for (auto track : descTracks) {
-            for (auto val : track.track) {
-                if (smallestNumber == -1 || val < smallestNumber) {
-                    descTrack = track;
-                    smallestNumber = val;
-                }
+        Track bestDescTrack;
+        size_t bestNumberOfBreakpoints = -1;
+        // Find the best descTrack
+        for (auto descTrack : descTracks) {
+            std::vector<size_t> changedGenome = reverseTrack(genome, descTrack.startIndex, descTrack.endIndex);
+            size_t numberOfBreakpoints = getBreakpointCount(changedGenome);
+            if (bestNumberOfBreakpoints == -1 || numberOfBreakpoints < bestNumberOfBreakpoints) {
+                bestDescTrack = descTrack;
+                bestNumberOfBreakpoints = numberOfBreakpoints;
             }
         }
 
         // Store the descending tracks end index because this is the smallest number.
-        size_t descTrackFirstIndex = descTrack.endIndex;
-        size_t descTrackSecondIndex = smallestNumber == 0 ? 0 :descTrackFirstIndex;
+        size_t descTrackFirstIndex = bestDescTrack.endIndex;
+        size_t descTrackSecondIndex = descTrackFirstIndex;
 
         Track endTrack;
         for (size_t i = 0; i < genome.size(); i++) {
@@ -212,11 +213,11 @@ namespace Util {
 
         // Add 1 to track start index (find with genome referece indexes)
         if (descTrackFirstIndex < descTrackSecondIndex) {
-            if (smallestNumber != 0) descTrackFirstIndex++;
+            descTrackFirstIndex++;
             return reverseTrack(genome, descTrackFirstIndex, descTrackSecondIndex);
         }
 
-        if (smallestNumber != 0) descTrackSecondIndex++;
+        descTrackSecondIndex++;
         return reverseTrack(genome, descTrackSecondIndex, descTrackFirstIndex);
     }
 
