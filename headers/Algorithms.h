@@ -30,7 +30,10 @@ namespace Algorithms {
 
     inline std::vector<size_t> improvedBreakpointReversalSort(const std::string& fileName, std::ofstream& outputFile) {
         std::vector<size_t> genome = Util::readFile(fileName);
-        std::vector<size_t> result;
+
+        // Add imaginary 0 and n+1 to the genome.
+        genome.emplace(genome.begin(), 0);
+        genome.push_back(genome.size());
 
         size_t breakpointCount = Util::getBreakpointCount(genome);
 
@@ -41,18 +44,48 @@ namespace Algorithms {
             if (!descTracks.empty()) {
                 genome = Util::reverseApplicableTrack(genome, descTracks);
             } else {
-
+                genome = Util::reverseAscending(genome);
             }
 
             breakpointCount = Util::getBreakpointCount(genome);
             Util::outputVector(outputFile, genome, true);
+            Util::output(outputFile, "\n", true);
         }
 
-        return result;
+        genome.erase(genome.begin());
+        genome.erase(genome.end());
+
+        return genome;
     }
 
-    inline std::vector<size_t> ownImprovedImplementation(const std::string& fileName) {
+    inline std::vector<size_t> ownImprovedImplementation(const std::string& fileName, std::ofstream& outputFile) {
+        std::vector<size_t> genome = Util::readFile(fileName);
 
+        // Add imaginary 0 and n+1 to the genome.
+        genome.emplace(genome.begin(), 0);
+        genome.push_back(genome.size());
+
+        size_t breakpointCount = Util::getBreakpointCount(genome);
+
+        while (breakpointCount > 0) {
+            std::vector<Track> tracks = Util::getTracks(genome);
+            std::vector<Track> descTracks = Util::getDescTracks(tracks);
+
+            if (!descTracks.empty()) {
+                genome = Util::reverseApplicableTrackImproved(genome, descTracks);
+            } else {
+                genome = Util::reverseAscending(genome);
+            }
+
+            breakpointCount = Util::getBreakpointCount(genome);
+            Util::outputVector(outputFile, genome, true);
+            Util::output(outputFile, "\n", true);
+        }
+
+        genome.erase(genome.begin());
+        genome.erase(genome.end());
+
+        return genome;
     }
 }
 

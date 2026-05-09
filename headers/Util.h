@@ -57,7 +57,7 @@ namespace Util {
         // To store the sliced vector.
         std::vector<size_t> result(endIt - startIt);
         std::copy(startIt, endIt, result.begin());
-        std::reverse(result.begin(), result.end());
+        std::ranges::reverse(result);
 
         // Replace rotated subvector in the genome.
         auto next_pos = genome.erase(startIt, endIt);
@@ -130,7 +130,10 @@ namespace Util {
 
         for (auto track : tracks) {
             for (size_t i = 1; i < track.track.size(); i++) {
-                if (track.track[i] < track.track[i-1]) descTracks.push_back(track);
+                if (track.track[i] < track.track[i-1]) {
+                    descTracks.push_back(track);
+                    i += track.track.size() - 1;
+                }
             }
         }
 
@@ -157,32 +160,82 @@ namespace Util {
 
         // Store the descending tracks end index because this is the smallest number.
         size_t descTrackFirstIndex = descTrack.endIndex;
-        size_t descTrackSecondIndex = descTrackFirstIndex;
+        size_t descTrackSecondIndex = smallestNumber == 0 ? 0 :descTrackFirstIndex;
 
         Track endTrack;
-        for (size_t i = 1; i < genome.size(); i++) {
-            if (genome[i] == genome[descTrackFirstIndex] - 1) descTrackFirstIndex = i;
+        for (size_t i = 0; i < genome.size(); i++) {
+            if (genome[i] == genome[descTrackFirstIndex] - 1) {
+                descTrackFirstIndex = i;
+                break;
+            }
         }
 
         // Add 1 to track start index (find with genome referece indexes)
-        if (descTrackFirstIndex < descTrackSecondIndex) descTrackFirstIndex++;
-        else descTrackSecondIndex++;
-
-        return reverseTrack(genome, descTrackFirstIndex, descTrackSecondIndex);
-
-        /*auto tracks = getTracks(genome);
-        size_t breakPointCount = getBreakpointCount(tracks);
-        size_t newBreakPointCount = breakPointCount;
-
-        size_t i = 0;
-        while (newBreakPointCount >= breakPointCount || i < tracks.size()) {
-            genome = reverseTrack(genome, tracks[i].startIndex, tracks[i].endIndex);
-            tracks = getTracks(genome);
-            newBreakPointCount = getBreakpointCount(tracks);
-            i++;
+        if (descTrackFirstIndex < descTrackSecondIndex) {
+            if (smallestNumber != 0) descTrackFirstIndex++;
+            return reverseTrack(genome, descTrackFirstIndex, descTrackSecondIndex);
         }
 
-        return track;*/
+        if (smallestNumber != 0) descTrackSecondIndex++;
+        return reverseTrack(genome, descTrackSecondIndex, descTrackFirstIndex);
+    }
+
+    // Finds a track in the genome which minimizes the breakpoint count in genome and reverse it in the genome.
+    inline std::vector<size_t> reverseApplicableTrackImproved(std::vector<size_t> genome, const std::vector<Track>& descTracks) {
+        std::vector<size_t> track;
+
+        if (descTracks.empty()) return {};
+
+        // Find the descendingTrack with the smallest number.
+        Track descTrack;
+        size_t smallestNumber = -1;
+        for (auto track : descTracks) {
+            for (auto val : track.track) {
+                if (smallestNumber == -1 || val < smallestNumber) {
+                    descTrack = track;
+                    smallestNumber = val;
+                }
+            }
+        }
+
+        // Store the descending tracks end index because this is the smallest number.
+        size_t descTrackFirstIndex = descTrack.endIndex;
+        size_t descTrackSecondIndex = smallestNumber == 0 ? 0 :descTrackFirstIndex;
+
+        Track endTrack;
+        for (size_t i = 0; i < genome.size(); i++) {
+            if (genome[i] == genome[descTrackFirstIndex] - 1) {
+                descTrackFirstIndex = i;
+                break;
+            }
+        }
+
+        // Add 1 to track start index (find with genome referece indexes)
+        if (descTrackFirstIndex < descTrackSecondIndex) {
+            if (smallestNumber != 0) descTrackFirstIndex++;
+            return reverseTrack(genome, descTrackFirstIndex, descTrackSecondIndex);
+        }
+
+        if (smallestNumber != 0) descTrackSecondIndex++;
+        return reverseTrack(genome, descTrackSecondIndex, descTrackFirstIndex);
+    }
+
+    inline std::vector<size_t> reverseAscending(std::vector<size_t> genome) {
+        auto tracks = getTracks(genome);
+
+        if (tracks.empty()) return {};
+
+        // Find first rack which lenght is > 1.
+        Track applicableTrack;
+
+        for (auto track : tracks) {
+            if (track.track.size() > 1 && std::find(track.track.begin(), track.track.end(), 0) == track.track.end()) {
+                applicableTrack = track;
+                break;
+            }
+        }
+
+        return reverseTrack(genome, applicableTrack.startIndex, applicableTrack.endIndex);
     }
 }
 
