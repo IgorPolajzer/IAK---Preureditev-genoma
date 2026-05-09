@@ -75,13 +75,8 @@ namespace Algorithms {
             std::vector<Track> tracks = Util::getTracks(genome);
             std::vector<Track> descTracks = Util::getDescTracks(tracks);
 
-            if (!descTracks.empty()) {
-                genome = Util::reverseApplicableTrackImproved(genome, breakpointCount);
-                reverseCounter++;
-            } else {
-                genome = Util::reverseAscending(genome);
-                reverseCounter++;
-            }
+            genome = Util::reverseApplicableTrackImproved(genome, breakpointCount);
+            reverseCounter++;
 
             breakpointCount = Util::getBreakpointCount(genome);
             Util::outputVector(outputFile, genome, true);

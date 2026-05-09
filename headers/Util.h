@@ -182,7 +182,6 @@ namespace Util {
         return reverseTrack(genome, descTrackSecondIndex, descTrackFirstIndex);
     }
 
-    // Finds a track in the genome which minimizes the breakpoint count in genome and reverse it in the genome.
     inline std::vector<size_t> reverseApplicableTrackImproved(const std::vector<size_t>& genome, const size_t breakpointCount) {
         std::vector<size_t> track;
 

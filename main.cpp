@@ -26,6 +26,9 @@ void runAlgorithm(const std::string& modeFlag, const std::string& fileName) {
         std::filesystem::create_directories(OUTPUT_FOLDER + "improved_custom_reversal_sort/");
         outputFile = std::ofstream(OUTPUT_FOLDER + "improved_custom_reversal_sort/" + outputFileName);
         results = Algorithms::ownImprovedImplementation(fileName, outputFile, reverseCounter);
+    } else {
+        std::cerr << "Unknown mode: " << modeFlag << std::endl;
+        return;
     }
 
     auto stop = std::chrono::high_resolution_clock::now();
